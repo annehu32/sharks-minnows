@@ -48,12 +48,13 @@ def xPercent(trans):
     # ranging from 6 on the right to -6 on the left
     # want to convert from this range to a percentage of 25-100 percent
     max_trans = 6.5 # the largest translational x-value read
-    100 * (abs(trans) / (max_trans)) ** 2
-# --------- MAIN CODE ---------------
-small = 2
-medium = 4
-big = 6
+    return 100 * (trans/ (max_trans))**2
 
+def yPercent(trans):
+    max_trans = 6.8 # the largest translational x-value read
+    return 100 * (trans/ (max_trans))**2
+
+# --------- MAIN CODE ---------------
 while True:
     clock.tick()
     img = sensor.snapshot()
@@ -61,32 +62,26 @@ while True:
         img.draw_rectangle(tag.rect(), color=(255, 0, 0))
         img.draw_cross(tag.cx(), tag.cy(), color=(0, 255, 0))
 
-        x = tag.x_translation()
+        x = tag.x_translation() # -x is right, +x is left
         y = tag.y_translation()
 
         # Reading AprilTag x-data for steering
         print("x: "+str(x)+", y: "+str(y))
         if x > 0:
-            print("---- going right ----")
-            client.publish("ME35-24/longshark", "R"+str(x))
+            print("---- going left ----")
+            client.publish("ME35-24/longshark", "L"+str(xPercent(x)))
         elif x< 0:
-            print("--- going left ---")
-            client.publish("ME35-24/longshark", "L"+str(x))
+            print("--- going right ---")
+            client.publish("ME35-24/longshark", "R"+str(xPercent(x)))
 
 
-        # Reading AprilTag y-data for speed
-        if y > big:
-            print("--- FULL SPEED AHEAD!!! ----")
-        elif y > medium:
-            print("---- Speed: medium ----")
-        elif y > small:
-            print("---- Speed: slow ----")
-        elif y > -small:
-            print("---- Speed: BACKWARDS slow ----")
-        elif y > -medium:
-            print("---- Speed: BACKWARDS medium ----")
-        elif y > -big:
-            print("---- Speed: SPEEDY RETREAT!!! ----")
+#        # Reading AprilTag y-data for speed
+#        if y > 0:
+#            print("--- FULL SPEED AHEAD!!! ----")
+#            client.publish("ME35-24/longshark", "F"+str(yPercent(y)))
+#        elif y < 0:
+#            print("---- Speed: SPEEDY RETREAT!!! ----")
+#            client.publish("ME35-24/longshark", "B"+str(yPercent(y)))
 
     print(clock.fps())
 
