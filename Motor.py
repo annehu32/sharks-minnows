@@ -4,9 +4,9 @@ from machine import Pin, PWM
 
 class Motor():
     
-    #Constants to be fiddled with
-    pwmMin = 25
-    pwmMax = 255
+    #below the min, the motor does not turn
+    # will likely have to revisit after construction
+    pwmMin = 1500
 
     # Initializer takes pins for the neopixel and buzzer
     def __init__(self, pin1, pin2, pwm, name):
@@ -23,14 +23,14 @@ class Motor():
         self.back.off()
         time.sleep(0.01)
         self.forward.on()
-        self.pwm.duty_u16(int(val*65535/100))
+        self.pwm.duty_u16(val)
     
     def goBackward(self, val):
         print(self.name + ' moving backward')
         self.forward.off()
         time.sleep(0.01)
         self.back.on()
-        self.pwm.duty_u16(int(val*65535/100)) # where val is a %
+        self.pwm.duty_u16(val) # where val is a %
 
     def stop(self):
         print(self.name + ' stopping ')
@@ -39,10 +39,10 @@ class Motor():
     
     def test(self):
         for i in range(25,101):
-            self.goForward(i)
+            self.goForward(int(float(i)/100*65355))
             print(i)
             time.sleep(0.05)
         for i in range(25, 101):
-            self.goBackward(i)
+            self.goBackward(int(float(i)/100*65355))
             time.sleep(0.05)
         self.stop()
