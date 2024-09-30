@@ -76,6 +76,7 @@ while True:
         # Publishes value over MQTT
         if tagNum < 4: # filters out any mis-reads to prevent index errors
             client.publish("ME35-24/longshark", tagID[tagNum]+str(zPercent(z)))
+            time.sleep(0.01)
 
 
     print(clock.fps())
