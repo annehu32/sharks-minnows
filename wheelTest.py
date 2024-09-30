@@ -7,8 +7,10 @@ import uasyncio as asyncio
 
 
 # ---- MQTT THINGS ----
-ssid = 'Tufts_Robot'
-password = ''
+#ssid = 'Tufts_Robot'
+#password = ''
+
+
 mqtt_broker = 'broker.hivemq.com'
 port = 1883
 topic_sub = 'ME35-24/longshark'
@@ -25,25 +27,15 @@ def callback(topic, msg):
     print((topic.decode(), val))
     
     if val[0] == 'R':
-        rightMotor.goForward(float(val[1:]))
+        rightMotor.goForward(int(val[1:]))
     elif val[0] == 'L':
-        leftMotor.goForward(float(val[1:]))
-        
-    if msg.decode() == 'right':
-        print('callback - going right')
-        rightMotor.goForward()
-        
-    elif msg.decode() == 'left':
-        print('callback - going left')
-        leftMotor.goForward()
-    
-    elif msg.decode() == 'forward':
-        rightMotor.goForward()
-        leftMotor.goForward()
-    
-    elif msg.decode() == 'backward':
-        rightMotor.goBackward()
-        leftMotor.goBackward()
+        leftMotor.goForward(int(val[1:]))
+    elif val[0] == 'F':
+        rightMotor.goForward(int(val[1:])) # this will have to be rethought with two picos
+        leftMotor.goForward(int(val[1:]))
+    elif val[0] == 'B':
+        rightMotor.goBackward(int(val[1:]))
+        leftMotor.goBackward(int(val[1:]))
     
     elif msg.decode() == 'stop':
         rightMotor.stop()
@@ -52,7 +44,7 @@ def callback(topic, msg):
 async def mqtt_handler(client):
     while True:
         client.check_msg()
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
 
 
 # --- Defining pins and motor objects ----
@@ -66,8 +58,8 @@ motor2PWM = PWM(Pin('GPIO6', Pin.OUT))
 leftMotor = Motor(motor1A, motor1B, motor1PWM, 'left')
 rightMotor = Motor(motor2A, motor2B, motor2PWM, 'right')
 
-#leftMotor.test()
-#rightMotor.test()
+leftMotor.test()
+rightMotor.test()
 
 connect_wifi()
 client = MQTTClient('ME35_chris', mqtt_broker, port, keepalive=60)
