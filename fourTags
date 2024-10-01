@@ -19,9 +19,10 @@ import time
 import math
 
 # ----- MQTT SETUP -----
-#SSID = "Tufts_Robot"  # Network SSID
-#KEY = ""  # Network key
-
+SSID = "Tufts_Robot"  # Network SSID
+KEY = ""  # Network key
+#SSID = "ARRIS-9985"  # Network SSID
+#KEY = "306865602614"  # Network key
 
 
 # Init wlan module and connect to network
@@ -36,7 +37,7 @@ while not wlan.isconnected():
 # We should have a valid IP now via DHCP
 print("WiFi Connected ", wlan.ifconfig())
 
-client = MQTTClient('ME35_chris_pub', 'broker.hivemq.com', port=1883)
+client = MQTTClient('ME35_anneCamera', 'broker.hivemq.com', port=1883)
 client.connect()
 
 # ---- CAMERA SETUP -----
