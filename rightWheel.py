@@ -42,7 +42,7 @@ def callback(topic, msg):
         rightMotor.stop()
     
     if isOn:
-        if val[0] == 'L':
+        if val[0] == 'R':
             rightMotor.turn(int(val[1:]))
         elif val[0] == 'F':
             rightMotor.goForward(int(val[1:]))
@@ -67,7 +67,7 @@ motor1PWM = PWM(Pin('GPIO3', Pin.OUT))
 rightMotor = Motor(motor1A, motor1B, motor1PWM, 'right')
 
 connect_wifi()
-client = MQTTClient('ME35_chris', mqtt_broker, port, keepalive=60)
+client = MQTTClient('ME35_anne1', mqtt_broker, port, keepalive=60)
 connect_mqtt(client)
 asyncio.run(mqtt_handler(client))
 
