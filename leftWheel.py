@@ -23,6 +23,12 @@ def connect_wifi():
     while not wlan.isconnected():
         time.sleep(1)
         
+def connect_mqtt(client):
+    client.set_callback(callback)
+    client.connect()
+    client.subscribe(topic_sub.encode())
+    print(f'Subscribed to {topic_sub}')
+        
 def callback(topic, msg):
     global isOn
     
@@ -36,7 +42,6 @@ def callback(topic, msg):
         leftMotor.stop()
     
     if isOn:
-    
         if val[0] == 'L':
             leftMotor.turn(int(val[1:]))
         elif val[0] == 'F':
@@ -47,8 +52,12 @@ def callback(topic, msg):
         
 async def mqtt_handler(client):
     while True:
-        client.check_msg()
-        await asyncio.sleep(0.01)
+        try:
+            client.check_msg()
+            await asyncio.sleep(0.01)
+        except Exception as e:
+            print('MQTT callback failed')
+            connect_mqtt(client)
 
 
 # --- Defining pins and motor objects ----
@@ -59,8 +68,6 @@ leftMotor = Motor(motor1A, motor1B, motor1PWM, 'left')
 
 connect_wifi()
 client = MQTTClient('ME35_chris', mqtt_broker, port, keepalive=60)
-client.set_callback(callback)
-client.connect()
-client.subscribe(topic_sub.encode())
-print(f'Subscribed to {topic_sub}')
+connect_mqtt(client)
 asyncio.run(mqtt_handler(client))
+
