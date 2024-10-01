@@ -20,11 +20,12 @@ def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(ssid, password)
+    
     while not wlan.isconnected():
         time.sleep(1)
+    print('----- connected to wifi -----')
         
 def connect_mqtt(client):
-    client.set_callback(callback)
     client.connect()
     client.subscribe(topic_sub.encode())
     print(f'Subscribed to {topic_sub}')
@@ -52,12 +53,16 @@ def callback(topic, msg):
         
 async def mqtt_handler(client):
     while True:
-        try:
-            client.check_msg()
-            await asyncio.sleep(0.01)
-        except Exception as e:
-            print('MQTT callback failed')
-            connect_mqtt(client)
+        if network.WLAN(network.STA_IF).isconnected():
+            try:
+                client.check_msg()
+            except Exception as e:
+                print('MQTT callback failed')
+                connect_mqtt(client)
+        else:
+            print('Wifi disconnected, trying to connect...')
+            connect_wifi()
+        await asyncio.sleep(0.01)
 
 
 # --- Defining pins and motor objects ----
@@ -67,7 +72,10 @@ motor1PWM = PWM(Pin('GPIO3', Pin.OUT))
 leftMotor = Motor(motor1A, motor1B, motor1PWM, 'left')
 
 connect_wifi()
-client = MQTTClient('ME35_chris', mqtt_broker, port, keepalive=60)
-connect_mqtt(client)
+client = MQTTClient('ME35_daniel1', mqtt_broker, port, keepalive=60)
+client.set_callback(callback)
+client.connect()
+client.subscribe(topic_sub.encode())
+print(f'Subscribed to {topic_sub}')
 asyncio.run(mqtt_handler(client))
 
