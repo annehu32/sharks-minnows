@@ -21,9 +21,6 @@ import math
 # ----- MQTT SETUP -----
 SSID = "Tufts_Robot"  # Network SSID
 KEY = ""  # Network key
-#SSID = "ARRIS-9985"  # Network SSID
-#KEY = "306865602614"  # Network key
-
 
 # Init wlan module and connect to network
 wlan = network.WLAN(network.STA_IF)
