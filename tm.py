@@ -8,7 +8,7 @@ class TM_manager:
         self.model_url = "https://teachablemachine.withgoogle.com/models/hviwwpdXy/"
         self.num_classes = 3
 
-        self.mqtt_topic = "ME35-24/test"
+        self.mqtt_topic = "ME35-24/longshark"
         self.myClient = mqtt_library.myClient
 
     async def connect_mqtt(self):
